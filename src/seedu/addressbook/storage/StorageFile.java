@@ -85,13 +85,21 @@ public class StorageFile {
      */
     public void save(AddressBook addressBook) throws StorageOperationException {
 
-        /* Note: Note the 'try with resource' statement below.
+    	checkStorageFile();    	
+    	createAndWriteFile(addressBook);
+    }
+
+    /*
+     * if storage file does not exist, create new file, else store data in storage file
+     */
+	private void createAndWriteFile(AddressBook addressBook) throws StorageOperationException {
+		/* Note: Note the 'try with resource' statement below.
          * More info: https://docs.oracle.com/javase/tutorial/essential/exceptions/tryResourceClose.html
          */
         try (final Writer fileWriter =
                      new BufferedWriter(new FileWriter(path.toFile()))) {
 
-            final AdaptedAddressBook toSave = new AdaptedAddressBook(addressBook);
+        	final AdaptedAddressBook toSave = new AdaptedAddressBook(addressBook);
             final Marshaller marshaller = jaxbContext.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(toSave, fileWriter);
@@ -101,7 +109,16 @@ public class StorageFile {
         } catch (JAXBException jaxbe) {
             throw new StorageOperationException("Error converting address book into storage format");
         }
-    }
+	}
+
+	/*
+	 * Check to see if storage file was deleted
+	 */
+    private void checkStorageFile() throws StorageOperationException {
+		if(!path.toFile().exists()) {
+        	throw new StorageOperationException("Error finding storage file:" + path);
+        }
+	}
 
     /**
      * Loads data from this storage file.
@@ -128,7 +145,7 @@ public class StorageFile {
         // create empty file if not found
         } catch (FileNotFoundException fnfe) {
             final AddressBook empty = new AddressBook();
-            save(empty);
+            createAndWriteFile(empty);
             return empty;
 
         // other errors
