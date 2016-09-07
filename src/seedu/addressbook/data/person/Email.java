@@ -20,7 +20,8 @@ public class Email extends Contact {
      */
     public Email(String email, boolean isProtected) throws IllegalValueException {
     	super(email.trim(), isProtected);
-        if (!isValidEmail(email.trim())) {
+    	email = email.trim();
+        if (!isValidEmail(email)) {
             throw new IllegalValueException(MESSAGE_EMAIL_CONSTRAINTS);
         }
     }
