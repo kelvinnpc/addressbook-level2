@@ -3,9 +3,12 @@ package seedu.addressbook.data.tag;
 import seedu.addressbook.data.person.Person;
 import seedu.addressbook.data.tag.Tag;
 
+/*
+ * Represents the association between Person and Tag
+ */
 public class Tagging {
-	private String action;
-	private String name;
+    private String action;
+    private String name;
     private String tag;
     
     public Tagging(String action, Person person, Tag tag) {
